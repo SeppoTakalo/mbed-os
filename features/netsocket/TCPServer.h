@@ -89,6 +89,12 @@ protected:
 
     volatile unsigned _pending;
     rtos::Semaphore _accept_sem;
+
+private:
+    /* ------Inherited from FileHandle------- */
+    /* Server sockets cannot really be FileHandle's so moved into private */
+    virtual ssize_t read(void *buffer, size_t size) { return NSAPI_ERROR_UNSUPPORTED; }
+    virtual ssize_t write(const void *buffer, size_t size) { return NSAPI_ERROR_UNSUPPORTED; }    
 };
 
 

@@ -121,10 +121,11 @@ nsapi_error_t Socket::bind(const SocketAddress &address)
     return ret;
 }
 
-void Socket::set_blocking(bool blocking)
+int Socket::set_blocking(bool blocking)
 {
     // Socket::set_timeout is thread safe
     set_timeout(blocking ? -1 : 0);
+    return 0;
 }
 
 void Socket::set_timeout(int timeout)

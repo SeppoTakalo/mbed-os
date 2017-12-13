@@ -112,6 +112,10 @@ public:
     nsapi_size_or_error_t recvfrom(SocketAddress *address,
             void *data, nsapi_size_t size);
 
+    /* ------Inherited from FileHandle------- */
+    virtual ssize_t read(void *buffer, size_t size) { return recvfrom(NULL, buffer, size); }
+    virtual ssize_t write(const void *buffer, size_t size) { return NSAPI_ERROR_UNSUPPORTED; }
+
 protected:
     virtual nsapi_protocol_t get_proto();
     virtual void event();

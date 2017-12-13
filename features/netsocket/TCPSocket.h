@@ -115,6 +115,10 @@ public:
      */
     nsapi_size_or_error_t recv(void *data, nsapi_size_t size);
 
+    /* ------Inherited from FileHandle------- */
+    virtual ssize_t read(void *buffer, size_t size) { return recv(buffer, size); }
+    virtual ssize_t write(const void *buffer, size_t size) { return send(buffer, size); }
+
 protected:
     friend class TCPServer;
 

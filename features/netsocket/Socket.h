@@ -25,11 +25,12 @@
 #include "rtos/Mutex.h"
 #include "Callback.h"
 #include "mbed_toolchain.h"
+#include "platform/FileHandle.h"
 
 
 /** Abstract socket class
  */
-class Socket {
+class Socket : public mbed::FileHandle {
 public:
     /** Destroy a socket
      *
@@ -52,15 +53,6 @@ public:
     nsapi_error_t open(S *stack) {
         return open(nsapi_create_stack(stack));
     }
-    
-    /** Close the socket
-     *
-     *  Closes any open connection and deallocates any memory associated
-     *  with the socket. Called from destructor if socket is not closed.
-     *
-     *  @return         0 on success, negative error code on failure
-     */
-    nsapi_error_t close();
     
     /** Subscribes to an IP multicast group
      *
@@ -106,19 +98,6 @@ public:
      *  @return         0 on success, negative error code on failure.
      */
     nsapi_error_t bind(const SocketAddress &address);
-    
-    /** Set blocking or non-blocking mode of the socket
-     *
-     *  Initially all sockets are in blocking mode. In non-blocking mode
-     *  blocking operations such as send/recv/accept return
-     *  NSAPI_ERROR_WOULD_BLOCK if they can not continue.
-     *
-     *  set_blocking(false) is equivalent to set_timeout(-1)
-     *  set_blocking(true) is equivalent to set_timeout(0)
-     *
-     *  @param blocking true for blocking mode, false for non-blocking mode.
-     */
-    void set_blocking(bool blocking);
     
     /** Set timeout on blocking socket operations
      *
@@ -212,6 +191,38 @@ public:
     void attach(T *obj, M method) {
         attach(mbed::callback(obj, method));
     }
+
+    /* ------Inherited from FileHandle------- */
+    
+    /** Close the socket
+     *
+     *  Closes any open connection and deallocates any memory associated
+     *  with the socket. Called from destructor if socket is not closed.
+     *
+     *  Inherited from FileHandle
+     *
+     *  @return         0 on success, negative error code on failure
+     */
+    virtual nsapi_error_t close();
+
+     /** Set blocking or non-blocking mode of the socket
+     *
+     *  Initially all sockets are in blocking mode. In non-blocking mode
+     *  blocking operations such as send/recv/accept return
+     *  NSAPI_ERROR_WOULD_BLOCK if they can not continue.
+     *
+     *  set_blocking(false) is equivalent to set_timeout(-1)
+     *  set_blocking(true) is equivalent to set_timeout(0)
+     *
+     *  @param blocking true for blocking mode, false for non-blocking mode.
+     */
+    virtual int set_blocking(bool blocking);
+
+    virtual int sync() { return -1; }
+    virtual int isatty() { return true; }
+    virtual off_t seek(off_t offset, int whence = SEEK_SET) { return -1; }
+    virtual off_t size() { return -1; }
+    virtual short poll(short events) { return 0; }
 
 protected:
     Socket();
