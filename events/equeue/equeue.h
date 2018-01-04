@@ -26,10 +26,11 @@ extern "C" {
 #endif
 
 // Platform specific files
-#include "equeue/equeue_platform.h"
+#include "events/equeue/equeue_platform.h"
 
 #include <stddef.h>
 #include <stdint.h>
+#include <stdbool.h>
 
 
 // The minimum size of an event

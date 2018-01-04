@@ -22,6 +22,7 @@
 #include "netsocket/SocketAddress.h"
 #include "netsocket/NetworkInterface.h"
 #include "DNS.h"
+#include "events/mbed_events.h"
 
 // Predeclared classes
 class OnboardNetworkStack;

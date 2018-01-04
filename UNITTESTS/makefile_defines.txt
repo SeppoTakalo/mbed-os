@@ -1,0 +1,23 @@
+#--- Inputs ----#
+CPPUTEST_USE_EXTENSIONS = Y
+CPPUTEST_USE_GCOV = Y
+CPPUTEST_USE_MEM_LEAK_DETECTION = N
+CPPUTEST_WARNINGFLAGS = ""
+CPPUTEST_PEDANTIC_ERRORS = N
+
+INCLUDE_DIRS = UNITTESTS/stubs \
+	. \
+    platform \
+    features \
+    drivers \
+    hal \
+    rtos/TARGET_CORTEX/rtx5/Include/ \
+    rtos/TARGET_CORTEX/ \
+    features/frameworks/nanostack-libservice/mbed-client-libservice/
+
+CPPUTEST_CFLAGS += -std=c99
+CPPUTEST_CXXFLAGS += -std=c++11
+
+CC=gcc
+CXX=g++
+SILENCE=@

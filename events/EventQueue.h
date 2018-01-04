@@ -17,7 +17,7 @@
 #ifndef EVENT_QUEUE_H
 #define EVENT_QUEUE_H
 
-#include "equeue/equeue.h"
+#include "events/equeue/equeue.h"
 #include "platform/Callback.h"
 #include "platform/NonCopyable.h"
 #include <cstddef>
@@ -84,7 +84,7 @@ public:
 
     /** Dispatch events without a timeout
      *
-     *  This is equivalent to EventQueue::dispatch with no arguments, but 
+     *  This is equivalent to EventQueue::dispatch with no arguments, but
      *  avoids overload ambiguities when passed as a callback.
      *
      *  @see EventQueue::dispatch
@@ -100,7 +100,7 @@ public:
 
     /** Millisecond counter
      *
-     *  Returns the underlying tick of the event queue represented as the 
+     *  Returns the underlying tick of the event queue represented as the
      *  number of milliseconds that have passed since an arbitrary point in
      *  time. Intentionally overflows to 0 after 2^32-1.
      *
