@@ -10,4 +10,3 @@ TEST(CircularBuffer, constructor)
     mbed::CircularBuffer<int, 10> buf;
     CHECK(true);
 }
-

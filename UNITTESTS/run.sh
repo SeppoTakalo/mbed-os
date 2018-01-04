@@ -13,7 +13,7 @@ tests=($(find UNITTESTS -name unittest.mk))
 
 echo "Building unittests"
 for test in ${tests[@]};do
-    make -s -f $test CPPUTEST_C_WARNINGFLAGS="" CPPUTEST_CXX_WARNINGFLAGS="" TEST_OUTPUT=unittests.txt all_no_tests
+    make -s -f $test CPPUTEST_C_WARNINGFLAGS="" CPPUTEST_CXX_WARNINGFLAGS="" all_no_tests || exit $?
 done
 
 echo
@@ -33,7 +33,15 @@ echo "Done"
 echo
 
 grep "error: Failure" unittests.txt
+RET=$?
 
-echo
 echo "Please see unittests.txt and coverage.html for results"
 echo
+
+if [ $RET -eq 0 ]; then
+	echo "Test failed"
+	exit 1
+else
+	echo
+	echo PASS
+fi

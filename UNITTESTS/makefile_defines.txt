@@ -6,8 +6,11 @@ CPPUTEST_WARNINGFLAGS = ""
 CPPUTEST_PEDANTIC_ERRORS = N
 
 INCLUDE_DIRS = . \
+    UNITTESTS/stubs \
     platform \
-    features
+    features \
+    rtos/TARGET_CORTEX/rtx5/Include/ \
+    rtos/TARGET_CORTEX/
 
 CPPUTEST_CFLAGS += -std=c99
 CPPUTEST_CXXFLAGS += -std=c++11
