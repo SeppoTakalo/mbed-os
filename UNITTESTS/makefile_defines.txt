@@ -5,10 +5,12 @@ CPPUTEST_USE_MEM_LEAK_DETECTION = N
 CPPUTEST_WARNINGFLAGS = ""
 CPPUTEST_PEDANTIC_ERRORS = N
 
-INCLUDE_DIRS = . \
-    UNITTESTS/stubs \
+INCLUDE_DIRS = UNITTESTS/stubs \
+	. \
     platform \
     features \
+    drivers \
+    hal \
     rtos/TARGET_CORTEX/rtx5/Include/ \
     rtos/TARGET_CORTEX/
 

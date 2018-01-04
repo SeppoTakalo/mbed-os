@@ -4,8 +4,9 @@ COMPONENT_NAME = template
 
 SRC_FILES = \
     UNITTESTS/unittest_main.cpp \
+    dirname/template.cpp
 
 TEST_SRC_FILES = \
-    UNITTESTS/dirname/template/test_template.cpp \
+    UNITTESTS/dirname/template/test_template.cpp
 
 include UNITTESTS/MakefileWorker.mk
