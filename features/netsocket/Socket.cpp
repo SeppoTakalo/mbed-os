@@ -15,7 +15,9 @@
  */
 
 #include "Socket.h"
-#include "mbed.h"
+#include "platform/Callback.h"
+
+using namespace mbed;
 
 Socket::Socket()
     : _stack(0)
