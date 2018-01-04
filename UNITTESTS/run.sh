@@ -4,8 +4,8 @@
 cd $(dirname $0)/..
 
 # Clean up previous files
-test -d objs && find objs -name "*.gcda"| xargs rm -f
-rm -f coverage*.html
+lcov -q -z -d .
+rm -rf coverage
 rm -f unittests.txt
 
 # Find all tests
@@ -27,7 +27,11 @@ done
 
 # Generate html coverage report
 echo "Generating coverage file"
-gcovr -d -r . -e UNITTESTS --html --html-detail -o coverage.html
+mkdir -p coverage
+lcov -q --capture --directory . --output-file coverage/coverage.info
+lcov -q -r coverage/coverage.info "/usr/*" -o coverage/coverage.info
+lcov -q -r coverage/coverage.info "*/UNITTESTS/*" -o coverage/coverage.info
+genhtml -q coverage/coverage.info --output-directory coverage
 
 echo "Done"
 echo
@@ -35,7 +39,7 @@ echo
 grep "error: Failure" unittests.txt
 RET=$?
 
-echo "Please see unittests.txt and coverage.html for results"
+echo "Please see unittests.txt and coverage/index.html for results"
 echo
 
 if [ $RET -eq 0 ]; then
