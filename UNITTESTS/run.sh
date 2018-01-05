@@ -11,10 +11,21 @@ rm -f unittests.txt
 # Find all tests
 tests=($(find UNITTESTS -name unittest.mk))
 
+if echo $@|grep clean >/dev/null; then
+    CMD=clean
+else
+    CMD=all_no_tests
+fi
+
 echo "Building unittests"
 for test in ${tests[@]};do
-    make -s -f $test CPPUTEST_C_WARNINGFLAGS="" CPPUTEST_CXX_WARNINGFLAGS="" all_no_tests || exit $?
+    make -s -f $test CPPUTEST_C_WARNINGFLAGS="" CPPUTEST_CXX_WARNINGFLAGS="" $CMD || exit $?
 done
+
+if [ $CMD == "clean" ]; then
+    exit
+fi
+
 
 echo
 echo "Running unittests"
