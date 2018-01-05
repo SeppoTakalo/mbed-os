@@ -21,7 +21,6 @@
 
 #include <stdint.h>
 #include <stdbool.h>
-#include "device.h"
 
 /**
  * Legacy format representing a timestamp in us.
