@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-#include "NetworkStack.h"
+#include "netsocket/NetworkStack.h"
 #include "nsapi_dns.h"
-#include "mbed.h"
 #include "stddef.h"
+#include "mbed_assert.h"
 #include <new>
 
 
