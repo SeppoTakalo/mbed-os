@@ -3,46 +3,102 @@
 # Go to root of Mbed OS
 cd $(dirname $0)/..
 
-# Clean up previous files
-lcov -q -z -d .
-rm -rf coverage
-rm -f unittests.txt
+tests=()
+BUILD_CMD="all_no_tests"
 
-# Find all tests
-tests=($(find UNITTESTS -name unittest.mk))
 
-if echo $@|grep clean >/dev/null; then
-    CMD=clean
-else
-    CMD=all_no_tests
-fi
+clean_reports() {
+    # Clean up previous files
+    lcov -q -z -d .
+    rm -rf coverage
+    rm -f unittests.txt
+}
 
-echo "Building unittests"
-for test in ${tests[@]};do
-    make -s -f $test CPPUTEST_C_WARNINGFLAGS="" CPPUTEST_CXX_WARNINGFLAGS="" $CMD || exit $?
-done
+find_tests() {
+    if [ ! -z $1 ]; then
+        find UNITTESTS -name unittest.mk | grep $1
+    else
+        find UNITTESTS -name unittest.mk
+    fi
+}
 
-if [ $CMD == "clean" ]; then
+build_tests() {
+    echo "Building unittests"
+    for test in ${tests[@]};do
+        make -s -f $test CPPUTEST_C_WARNINGFLAGS="" CPPUTEST_CXX_WARNINGFLAGS="" $BUILD_CMD || exit $?
+    done
+}
+
+run_tests() {
+    echo
+    echo "Running unittests"
+
+    # Then run
+    for test in ${tests[@]};do
+        make -f $test TEST_OUTPUT=unittests.txt vtest
+    done
+}
+
+generate_report() {
+    # Generate html coverage report
+    echo "Generating coverage file"
+    mkdir -p coverage
+    lcov -q --capture --directory . --output-file coverage/coverage.info
+    lcov -q -r coverage/coverage.info "/usr/*" -o coverage/coverage.info
+    lcov -q -r coverage/coverage.info "*/UNITTESTS/*" -o coverage/coverage.info
+    genhtml -q coverage/coverage.info --output-directory coverage
+}
+
+print_usage() {
+    echo
+    echo "$0 [-h] run|clean [name]"
+    echo "    -h: Print help and exit"
+    echo "    run: Build & run unittests"
+    echo "    clean: Clean up the builds without running"
+    echo "    name: Expression to match against test directories"
+    echo
+    echo "Examples:"
+    echo "to run all tests: $0 run"
+    echo "to run tests matching Socket: $0 run Socket"
+    echo "to exactly match path: $0 run features/netsocket/TCPSocket"
+}
+
+if [ -z $1 ]; then
+    print_usage
     exit
 fi
 
+tests=($(find_tests))
 
-echo
-echo "Running unittests"
-
-# Then run
-for test in ${tests[@]};do
-    make -f $test TEST_OUTPUT=unittests.txt vtest
+#
+# Parse command line parameters
+#
+while [ ! -z $1 ]; do
+    case "$1" in
+        -h)
+            print_usage
+            exit
+            ;;
+        run)
+            BUILD_CMD="all_no_tests"
+            ;;
+        clean)
+            BUILD_CMD="clean"
+            ;;
+        *)
+            tests=($(find_tests $1))
+            ;;
+    esac
+    shift
 done
 
-
-# Generate html coverage report
-echo "Generating coverage file"
-mkdir -p coverage
-lcov -q --capture --directory . --output-file coverage/coverage.info
-lcov -q -r coverage/coverage.info "/usr/*" -o coverage/coverage.info
-lcov -q -r coverage/coverage.info "*/UNITTESTS/*" -o coverage/coverage.info
-genhtml -q coverage/coverage.info --output-directory coverage
+clean_reports
+build_tests
+if [ $BUILD_CMD == "clean" ]; then
+    exit
+fi
+run_tests
+generate_report
 
 echo "Done"
 echo
