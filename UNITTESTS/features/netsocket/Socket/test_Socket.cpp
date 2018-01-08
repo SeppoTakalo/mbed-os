@@ -56,11 +56,42 @@ TEST(Socket, close)
 
 TEST(Socket, modify_multicast_group)
 {
-	SocketAddress a("localhost", 22);
+	SocketAddress a("localhost", 1024);
 	stack.return_value = NSAPI_ERROR_OK;
 	socket->open((NetworkStack*)&stack);
 	CHECK(socket->join_multicast_group(a) == NSAPI_ERROR_UNSUPPORTED);
 	CHECK(socket->leave_multicast_group(a) == NSAPI_ERROR_UNSUPPORTED);
+}
+
+TEST(Socket, bind)
+{
+	socket->close();
+	CHECK(socket->bind(1024) == NSAPI_ERROR_NO_SOCKET);
+	socket->open((NetworkStack*)&stack);
+	stack.return_value = NSAPI_ERROR_OK;
+	CHECK(socket->bind(1024) == NSAPI_ERROR_OK);
+	CHECK(socket->bind("localhost", 1024) == NSAPI_ERROR_OK);
+}
+
+TEST(Socket, set_blocking)
+{
+	socket->set_blocking(false);
+	socket->set_blocking(true);
+}
+
+TEST(Socket, getsockopt)
+{
+	socket->close();
+	CHECK(socket->getsockopt(0, 0, 0, 0) == NSAPI_ERROR_NO_SOCKET);
+	socket->open((NetworkStack*)&stack);
+	stack.return_value = NSAPI_ERROR_OK;
+	CHECK(socket->getsockopt(0, 0, 0, 0) == NSAPI_ERROR_UNSUPPORTED);
+}
+
+TEST(Socket, setsockopt_no_stack)
+{
+	socket->close();
+	CHECK(socket->setsockopt(0,0,0,0) == NSAPI_ERROR_NO_SOCKET);
 }
 
 TEST(Socket, sigio)
