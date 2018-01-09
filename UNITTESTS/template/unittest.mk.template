@@ -3,10 +3,10 @@ include UNITTESTS/makefile_defines.txt
 COMPONENT_NAME = template
 
 SRC_FILES = \
-    UNITTESTS/unittest_main.cpp \
-    dirname/template.cpp
+    UNITTESTS/unittest_main.cpp
 
 TEST_SRC_FILES = \
-    UNITTESTS/dirname/template/test_template.cpp
+    UNITTESTS/dirname/template/test_template.cpp \
+    dirname/template.cpp
 
 include UNITTESTS/MakefileWorker.mk
