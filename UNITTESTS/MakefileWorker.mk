@@ -460,10 +460,10 @@ $(TARGET_LIB): $(OBJ)
 	$(SILENCE)$(RANLIB) $@
 
 test: $(TEST_TARGET)
-	$(RUN_TEST_TARGET) | tee -a $(TEST_OUTPUT)
+	$(RUN_TEST_TARGET) | tee $(TEST_OUTPUT)
 
 vtest: $(TEST_TARGET)
-	$(RUN_TEST_TARGET) -v  | tee -a $(TEST_OUTPUT)
+	$(RUN_TEST_TARGET) -v  | tee $(TEST_OUTPUT)
 
 $(CPPUTEST_OBJS_DIR)/%.o: %.cc
 	@echo compiling $(notdir $<)

@@ -1,0 +1,6 @@
+genhtml_hi_limit  = 80
+genhtml_med_limit = 40
+genhtml_num_spaces = 4
+genhtml_legend = 1
+genhtml_desc_html = 1
+lcov_branch_coverage = 1
