@@ -51,8 +51,9 @@ generate_report() {
 
 print_usage() {
     echo
-    echo "$0 [-h] run|clean [name]"
+    echo "$0 [-h] build|run|clean [name]"
     echo "    -h: Print help and exit"
+    echo "    build: Build unittest but don't run"
     echo "    run: Build & run unittests"
     echo "    clean: Clean up the builds without running"
     echo "    name: Expression to match against test directories"
@@ -69,7 +70,7 @@ if [ -z $1 ]; then
 fi
 
 tests=($(find_tests))
-
+do_run=1
 #
 # Parse command line parameters
 #
@@ -79,11 +80,17 @@ while [ ! -z $1 ]; do
             print_usage
             exit
             ;;
+        build)
+            BUILD_CMD="all_no_tests"
+            do_run=0
+            ;;
         run)
             BUILD_CMD="all_no_tests"
+            do_run=1
             ;;
         clean)
             BUILD_CMD="clean"
+            do_run=0
             ;;
         *)
             tests=($(find_tests $1))
@@ -94,7 +101,7 @@ done
 
 clean_reports
 build_tests
-if [ $BUILD_CMD == "clean" ]; then
+if [ $do_run -eq 0 ]; then
     exit
 fi
 run_tests
