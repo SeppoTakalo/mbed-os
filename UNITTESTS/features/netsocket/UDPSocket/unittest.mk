@@ -12,6 +12,9 @@ TEST_SRC_FILES = \
     features/netsocket/Socket.cpp \
     UNITTESTS/stubs/Mutex.cpp \
     UNITTESTS/stubs/mbed_assert.c \
-    UNITTESTS/stubs/EventFlags.cpp
+    UNITTESTS/stubs/EventFlags.cpp \
+    features/netsocket/NetworkStack.cpp \
+    UNITTESTS/stubs/nsapi_dns.c
+
 
 include UNITTESTS/MakefileWorker.mk

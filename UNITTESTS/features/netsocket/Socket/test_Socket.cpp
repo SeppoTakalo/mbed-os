@@ -3,9 +3,14 @@
 #include "NetworkStackstub.h"
 
 class stubSocket : public Socket {
+public:
+	virtual void event() {
+		if (_callback) {
+			_callback.call();
+		}
+	}
 protected:
 	virtual nsapi_protocol_t get_proto() {return NSAPI_TCP;}
-	virtual void event() {}
 };
 
 static bool callback_is_called;
@@ -15,7 +20,7 @@ static void my_callback() {
 
 TEST_GROUP(Socket)
 {
-	Socket *socket;
+	stubSocket *socket;
 	NetworkStackstub stack;
 	void setup() {
 		socket = new stubSocket;
@@ -45,6 +50,13 @@ TEST(Socket, open)
 {
 	stack.return_value = NSAPI_ERROR_OK;
 	CHECK(socket->open((NetworkStack*)&stack) == NSAPI_ERROR_OK);
+}
+
+TEST(Socket, open_twice)
+{
+	stack.return_value = NSAPI_ERROR_OK;
+	CHECK(socket->open((NetworkStack*)&stack) == NSAPI_ERROR_OK);
+	CHECK(socket->open((NetworkStack*)&stack) == NSAPI_ERROR_PARAMETER);
 }
 
 TEST(Socket, close)
@@ -96,6 +108,10 @@ TEST(Socket, setsockopt_no_stack)
 
 TEST(Socket, sigio)
 {
+	callback_is_called = false;
+	// I'm calling sigio() through the DEPRECATED method, just to get coverage for both.
+	// Not sure if this is wise at all, we should not aim for 100%
 	socket->attach(mbed::callback(my_callback));
-	socket->sigio(mbed::callback(my_callback));
+	socket->event();
+	CHECK(callback_is_called);
 }
