@@ -25,6 +25,7 @@
 #include "PinNames.h"
 #include "platform/Callback.h"
 #include "platform/mbed_error.h"
+#include "mbed_wait_api.h"
 
 #define TRACE_GROUP  "ESPA" // ESP8266 AT layer
 
@@ -71,6 +72,7 @@ ESP8266::ESP8266(PinName tx, PinName rx, bool debug, PinName rts, PinName cts)
     _parser.oob("UNLINK", callback(this, &ESP8266::_oob_socket_close_err));
     _parser.oob("ALREADY CONNECTED", callback(this, &ESP8266::_oob_conn_already));
     _parser.oob("ERROR", callback(this, &ESP8266::_oob_err));
+    _parser.oob("SEND FAIL", callback(this, &ESP8266::_oob_send_fail));
     // Don't expect to find anything about the watchdog reset in official documentation
     //https://techtutorialsx.com/2017/01/21/esp8266-watchdog-functions/
     _parser.oob("wdt reset", callback(this, &ESP8266::_oob_watchdog_reset));
@@ -569,13 +571,14 @@ nsapi_error_t ESP8266::send(int id, const void *data, uint32_t amount)
         amount = 2048;
     // Datagram must stay intact
     } else if (amount > 2048 && _sock_i[id].proto == NSAPI_UDP) {
-        tr_debug("UDP datagram maximum size is 2048");
+        tr_error("UDP datagram maximum size is 2048");
         return NSAPI_ERROR_PARAMETER;
     }
 
     _smutex.lock();
     set_timeout(ESP8266_SEND_TIMEOUT);
     _busy = false;
+    _error = false;
     if (_parser.send("AT+CIPSEND=%d,%lu", id, amount)
             && _parser.recv(">")
             && _parser.write((char *)data, (int)amount) >= 0
@@ -588,6 +591,7 @@ nsapi_error_t ESP8266::send(int id, const void *data, uint32_t amount)
         return NSAPI_ERROR_OK;
     }
     if (_error) {
+        tr_warning("oob ERROR while AT+CIPSEND");
         _error = false;
     }
     if (_busy) {
@@ -631,7 +635,7 @@ void ESP8266::_oob_packet_hdlr()
     pdu_len = sizeof(struct packet) + amount;
 
     if ((_heap_usage + pdu_len) > MBED_CONF_ESP8266_SOCKET_BUFSIZE) {
-        tr_debug("\"esp8266.socket-bufsize\"-limit exceeded, packet dropped");
+        tr_error("\"esp8266.socket-bufsize\"-limit exceeded, packet dropped");
         return;
     }
 
@@ -852,17 +856,20 @@ void ESP8266::_clear_socket_packets(int id)
 bool ESP8266::close(int id)
 {
     //May take a second try if device is busy
-    for (unsigned i = 0; i < 2; i++) {
+    for (unsigned i = 0; i < 100; i++) {
         _smutex.lock();
+        _busy = false;
         if (_parser.send("AT+CIPCLOSE=%d", id)) {
             if (!_parser.recv("OK\n")) {
-                if (_closed) { // UNLINK ERROR
-                    _closed = false;
+                if (_closed) {
                     _sock_i[id].open = false;
                     _clear_socket_packets(id);
                     _smutex.unlock();
-                    // ESP8266 has a habit that it might close a socket on its own.
                     return true;
+                }
+                tr_warning("AT+CIPCLOSE failed! busy=%d", (int)_busy);
+                if (_busy) {
+                    wait_ms(100*i);
                 }
             } else {
                 // _sock_i[id].open set to false with an OOB
@@ -1082,6 +1089,12 @@ void ESP8266::_oob_connection_status()
 
     MBED_ASSERT(_conn_stat_cb);
     _conn_stat_cb();
+}
+
+void ESP8266::_oob_send_fail()
+{
+    tr_warning("SEND FAIL");
+    _busy = true; // Cause WOULD_BLOCK to be returned
 }
 
 int8_t ESP8266::default_wifi_mode()

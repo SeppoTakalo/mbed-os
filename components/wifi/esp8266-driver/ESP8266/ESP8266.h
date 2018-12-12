@@ -426,6 +426,7 @@ private:
     void _oob_watchdog_reset();
     void _oob_busy();
     void _oob_tcp_data_hdlr();
+    void _oob_send_fail();
 
     // OOB state variables
     int _connect_error;
