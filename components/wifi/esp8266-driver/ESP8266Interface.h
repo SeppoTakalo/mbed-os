@@ -361,6 +361,7 @@ private:
         void *data;
     } _cbs[ESP8266_SOCKET_COUNT];
     void event();
+    void delayed_event();
 
     // Connection state reporting to application
     nsapi_connection_status_t _conn_stat;

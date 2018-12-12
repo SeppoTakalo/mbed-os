@@ -523,7 +523,7 @@ int ESP8266Interface::socket_send(void *handle, const void *data, unsigned size)
 
     if (status == NSAPI_ERROR_WOULD_BLOCK) {
         debug("Enqueuing the event call");
-        _global_event_queue->call_in(500, callback(this, &ESP8266Interface::event));
+        _global_event_queue->call_in(1000, callback(this, &ESP8266Interface::delayed_event));
     }
 
     return status != NSAPI_ERROR_OK ? status : size;
@@ -669,6 +669,12 @@ void ESP8266Interface::event()
             _cbs[i].callback(_cbs[i].data);
         }
     }
+}
+
+void ESP8266Interface::delayed_event()
+{
+    tr_debug("delayed_event");
+    event();
 }
 
 void ESP8266Interface::attach(Callback<void(nsapi_event_t, intptr_t)> status_cb)
