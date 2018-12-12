@@ -606,7 +606,8 @@ nsapi_error_t ESP8266::send(int id, const void *data, uint32_t amount)
     set_timeout();
     _smutex.unlock();
 
-    return NSAPI_ERROR_DEVICE_ERROR;
+    tr_error("AT+CIPSEND failed");
+    return _error ? NSAPI_ERROR_DEVICE_ERROR : NSAPI_ERROR_WOULD_BLOCK;
 }
 
 void ESP8266::_oob_packet_hdlr()
