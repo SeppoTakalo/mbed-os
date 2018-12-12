@@ -599,6 +599,10 @@ nsapi_error_t ESP8266::send(int id, const void *data, uint32_t amount)
         set_timeout();
         _smutex.unlock();
         tr_debug("returning WOULD_BLOCK");
+        if (!FW_AT_LEAST_VERSION(_at_v.major, _at_v.minor, _at_v.patch, 0, ESP8266_AT_VERSION_WIFI_SCAN_CHANGE)) {
+            // You deserve punishment for running such old firmware
+            wait_ms(1000);
+        }
         return NSAPI_ERROR_WOULD_BLOCK;
     }
 
