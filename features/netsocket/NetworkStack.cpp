@@ -35,7 +35,7 @@ nsapi_error_t NetworkStack::gethostbyname(const char *name, SocketAddress *addre
     // check for simple ip addresses
     if (address->set_ip_address(name)) {
         if (version != NSAPI_UNSPEC && address->get_ip_version() != version) {
-            return NSAPI_ERROR_DNS_FAILURE;
+            return NSAPI_ERROR_PARAMETER;
         }
 
         return NSAPI_ERROR_OK;
@@ -64,7 +64,7 @@ nsapi_value_or_error_t NetworkStack::gethostbyname_async(const char *name, hostb
     // check for simple ip addresses
     if (address.set_ip_address(name)) {
         if (version != NSAPI_UNSPEC && address.get_ip_version() != version) {
-            return NSAPI_ERROR_DNS_FAILURE;
+            return NSAPI_ERROR_PARAMETER;
         }
 
         callback(NSAPI_ERROR_OK, &address);
