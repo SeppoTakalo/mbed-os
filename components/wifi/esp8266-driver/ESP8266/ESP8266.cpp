@@ -594,7 +594,6 @@ nsapi_error_t ESP8266::send(int id, const void *data, uint32_t amount)
     }
     if (_error) {
         tr_warning("oob ERROR while AT+CIPSEND");
-        _error = false;
     }
     if (_busy) {
         set_timeout();

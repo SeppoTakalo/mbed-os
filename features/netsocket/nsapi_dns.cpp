@@ -442,7 +442,7 @@ static nsapi_error_t nsapi_dns_get_server_addr(NetworkStack *stack, uint8_t *ind
 static nsapi_size_or_error_t nsapi_dns_query_multiple(NetworkStack *stack, const char *host,
                                                       nsapi_addr_t *addr, unsigned addr_count, nsapi_version_t version)
 {
-    tr_debug("nsapi_dns_query_multiple");
+    tr_debug("nsapi_dns_query_multiple, stack=%p", stack);
     // check for valid host name
     int host_len = host ? strlen(host) : 0;
     if (host_len > DNS_HOST_NAME_MAX_LEN || host_len == 0) {
@@ -459,6 +459,7 @@ static nsapi_size_or_error_t nsapi_dns_query_multiple(NetworkStack *stack, const
     UDPSocket socket;
     int err = socket.open(stack);
     if (err) {
+        tr_error("UDPSocket::open() failed with %d", err);
         return err;
     }
 
@@ -467,6 +468,7 @@ static nsapi_size_or_error_t nsapi_dns_query_multiple(NetworkStack *stack, const
     // create network packet
     uint8_t *const packet = (uint8_t *)malloc(DNS_BUFFER_SIZE);
     if (!packet) {
+        tr_error("malloc failed");
         return NSAPI_ERROR_NO_MEMORY;
     }
 
