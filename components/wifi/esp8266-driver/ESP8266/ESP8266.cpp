@@ -137,6 +137,7 @@ struct ESP8266::fw_sdk_version ESP8266::sdk_version()
         _sdk_v.major = major;
         _sdk_v.minor = minor;
         _sdk_v.patch = patch;
+        tr_debug("SDK version version:%d.%d.%d", major, minor, patch);
     }
     return _sdk_v;
 }
@@ -158,6 +159,7 @@ struct ESP8266::fw_at_version ESP8266::at_version()
         _at_v.major = major;
         _at_v.minor = minor;
         _at_v.patch = patch;
+        tr_debug("AT version version:%d.%d.%d", major, minor, patch);
     }
     return _at_v;
 }
