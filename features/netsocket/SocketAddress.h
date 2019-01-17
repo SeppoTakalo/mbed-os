@@ -33,6 +33,13 @@ class NetworkInterface;
  */
 class SocketAddress {
 public:
+    /** Default constructor.
+     *
+     *  Provides uninitialised address that can be used in comparison operations
+     *  with definite results.
+     */
+    SocketAddress();
+
     /** Create a SocketAddress from a hostname and port
      *
      *  The hostname may be either a domain name or an IP address. If the
@@ -63,7 +70,7 @@ public:
      *  @param addr     Raw IP address
      *  @param port     Optional 16-bit port, defaults to 0
      */
-    SocketAddress(nsapi_addr_t addr = nsapi_addr_t(), uint16_t port = 0);
+    SocketAddress(nsapi_addr_t addr, uint16_t port = 0);
 
     /** Create a SocketAddress from an IP address and port
      *
@@ -151,6 +158,8 @@ public:
 
     /** Test if address is zero
      *
+     *  Uninitialised SocketAddress is considered zero.
+     *
      *  @return         True if address is not zero
      */
     operator bool() const;
@@ -163,11 +172,17 @@ public:
 
     /** Compare two addresses for equality
      *
+     *  When comparing two unitilised SocketAddress object
+     *  they are consider equal.
+     *
      *  @return         True if both addresses are equal
      */
     friend bool operator==(const SocketAddress &a, const SocketAddress &b);
 
     /** Compare two addresses for equality
+     *
+     *  When comparing two unitilised SocketAddress object
+     *  they are consider equal.
      *
      *  @return         True if both addresses are not equal
      */

@@ -23,6 +23,12 @@
 #include "ip6string.h"
 
 
+SocketAddress::SocketAddress()
+{
+    _ip_address = NULL;
+    set_port(0);
+    _addr.version = NSAPI_UNSPEC;
+}
 
 SocketAddress::SocketAddress(nsapi_addr_t addr, uint16_t port)
 {

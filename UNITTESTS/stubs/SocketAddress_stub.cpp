@@ -32,6 +32,9 @@ static int ipv6_scan_chunk(uint16_t *shorts, const char *chunk)
     return 0;
 }
 
+SocketAddress::SocketAddress()
+{
+}
 
 SocketAddress::SocketAddress(nsapi_addr_t addr, uint16_t port)
 {
