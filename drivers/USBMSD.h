@@ -24,7 +24,7 @@
 #include "platform/Callback.h"
 #include "drivers/internal/PolledQueue.h"
 #include "drivers/internal/Task.h"
-#include "BlockDevice.h"
+#include "features/storage/blockdevice/BlockDevice.h"
 #include "Mutex.h"
 
 #include "USBDevice.h"

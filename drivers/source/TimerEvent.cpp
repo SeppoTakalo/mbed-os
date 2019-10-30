@@ -45,12 +45,12 @@ TimerEvent::~TimerEvent()
 // insert in to linked list
 void TimerEvent::insert(timestamp_t timestamp)
 {
-    ticker_insert_event(_ticker_data, &event, timestamp, (uint32_t)this);
+    ticker_insert_event(_ticker_data, &event, timestamp, (uint32_t)(intptr_t)this);
 }
 
 void TimerEvent::insert_absolute(us_timestamp_t timestamp)
 {
-    ticker_insert_event_us(_ticker_data, &event, timestamp, (uint32_t)this);
+    ticker_insert_event_us(_ticker_data, &event, timestamp, (uint32_t)(intptr_t)this);
 }
 
 void TimerEvent::remove()

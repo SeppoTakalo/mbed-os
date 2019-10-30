@@ -21,6 +21,8 @@
 #include "rtos/Semaphore.h"
 #include "platform/mbed_critical.h"
 
+using namespace events;
+
 TaskBase::TaskBase(TaskQueue *q)
     : _queue(q), _posted(false), _start_count(0), _flush_sem(NULL)
 {

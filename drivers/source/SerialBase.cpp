@@ -40,7 +40,7 @@ SerialBase::SerialBase(PinName tx, PinName rx, int baud) :
 
     serial_init(&_serial, tx, rx);
     serial_baud(&_serial, _baud);
-    serial_irq_handler(&_serial, SerialBase::_irq_handler, (uint32_t)this);
+    serial_irq_handler(&_serial, SerialBase::_irq_handler, (uint32_t)(intptr_t)this);
 }
 
 void SerialBase::baud(int baudrate)

@@ -47,7 +47,7 @@ InterruptIn::InterruptIn(PinName pin, PinMode mode) :
 
 void InterruptIn::irq_init(PinName pin)
 {
-    gpio_irq_init(&gpio_irq, pin, (&InterruptIn::_irq_handler), (uint32_t)this);
+    gpio_irq_init(&gpio_irq, pin, (&InterruptIn::_irq_handler), (uint32_t)(uintptr_t)this);
 }
 
 InterruptIn::~InterruptIn()

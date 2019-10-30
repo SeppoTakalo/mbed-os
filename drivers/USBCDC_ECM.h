@@ -21,10 +21,10 @@
 #include "USBDescriptor.h"
 #include "USBDevice.h"
 #include "ByteBuffer.h"
-#include "Mutex.h"
+#include "rtos/Mutex.h"
 #include "EventFlags.h"
 #include "EventQueue.h"
-#include "Thread.h"
+#include "rtos/Thread.h"
 #include "Callback.h"
 
 #define MAX_PACKET_SIZE_INT     (64)
