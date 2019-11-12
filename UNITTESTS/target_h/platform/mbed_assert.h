@@ -63,17 +63,22 @@ void mbed_assert_internal(const char *expr, const char *file, int line);
  *  }
  *  @endcode
  */
-#if defined( NDEBUG ) && !defined (MBED_WDOG_ASSERT)
-#define MBED_ASSERT(expr) ((void)0)
-#else
+#ifndef MBED_ASSERT_THROW_ERROR
 #define MBED_ASSERT(expr)                                \
 do {                                                     \
     if (!(expr)) {                                       \
         mbed_assert_internal(#expr, __FILE__, __LINE__); \
     }                                                    \
 } while (0)
+#else
+#define MBED_ASSERT(expr)                                \
+do {                                                     \
+    if (!(expr)) {                                       \
+        mbed_assert_internal(#expr, __FILE__, __LINE__); \
+        throw 1;                                         \
+    }                                                    \
+} while (0)
 #endif
-
 
 
 /** MBED_STATIC_ASSERT

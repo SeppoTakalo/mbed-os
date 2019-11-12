@@ -17,3 +17,5 @@ set(unittest-sources
 set(unittest-test-sources
   features/storage/blockdevice/HeapBlockDevice/test.cpp
 )
+
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DMBED_ASSERT_THROW_ERROR")

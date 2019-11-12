@@ -50,6 +50,11 @@ TEST_F(HeapBlockDeviceTest, constructor)
     EXPECT_EQ(one.deinit(), BD_ERROR_OK);
 }
 
+TEST_F(HeapBlockDeviceTest, constructor_wrong_size)
+{
+    ASSERT_ANY_THROW(mbed::HeapBlockDevice one(3050, 100));
+}
+
 TEST_F(HeapBlockDeviceTest, double_init)
 {
     mbed::HeapBlockDevice one{DEVICE_SIZE};
