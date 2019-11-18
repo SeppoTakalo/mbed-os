@@ -690,6 +690,41 @@ void test_deinit_bd()
     block_device = NULL;
 }
 
+void test_write_deinit_init()
+{
+    TEST_SKIP_UNLESS_MESSAGE(block_device != NULL, "no block device found.");
+    // Determine start_address & stop_address
+    uint8_t sector_num = rand() % (num_of_sectors - 2);
+    bd_addr_t addr = sectors_addr[sector_num];
+    bd_addr_t end = sectors_addr[sector_num + 1];
+    bd_size_t size = end - addr;
+    uint8_t *prog = (uint8_t *) malloc(size);
+    TEST_ASSERT_NOT_EQUAL(prog, 0);
+    uint8_t *read = (uint8_t *) malloc(size);
+    TEST_ASSERT_NOT_EQUAL(read, 0);
+
+    for (int i = 0; i < 10; i++) {
+        // Generate test pattern
+        for(int j = 0; j < size; j++) {
+            prog[j] = (uint8_t)'0' + i + j;
+        }
+
+        int err;
+        err = block_device->erase(addr, size);
+        TEST_ASSERT_EQUAL(err, 0);
+        err = block_device->program(prog, addr, size);
+        TEST_ASSERT_EQUAL(err, 0);
+        err = block_device->deinit();
+        TEST_ASSERT_EQUAL(0, err);
+        err = block_device->init();
+        TEST_ASSERT_EQUAL(0, err);
+        err = block_device->read(read, addr, size);
+        TEST_ASSERT_EQUAL(0, memcmp(prog, read, size));
+    }
+    free(prog);
+    free(read);
+}
+
 void test_get_type_functionality()
 {
     utest_printf("\nTest get blockdevice type..\n");
@@ -727,6 +762,7 @@ typedef struct {
 
 template_case_t template_cases[] = {
     {"Testing Init block device", test_init_bd, greentea_failure_handler},
+    {"Testing write -> deinit -> init -> read", test_write_deinit_init, greentea_failure_handler},
     {"Testing read write random blocks", test_random_program_read_erase, greentea_failure_handler},
 #if defined(MBED_CONF_RTOS_PRESENT)
     {"Testing multi threads erase program read", test_multi_threads, greentea_failure_handler},
