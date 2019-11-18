@@ -76,6 +76,9 @@ int BufferedBlockDevice::deinit()
         return BD_ERROR_OK;
     }
 
+    // Flush out all data from buffers
+    sync();
+
     uint32_t val = core_util_atomic_decr_u32(&_init_ref_count, 1);
 
     if (val) {
@@ -208,7 +211,6 @@ int BufferedBlockDevice::program(const void *b, bd_addr_t addr, bd_size_t size)
         if (ret) {
             return ret;
         }
-        _write_cache_addr = aligned_addr;
     }
 
     // Write logic: Keep data in cache as long as we don't reach the end of the program unit.
@@ -247,11 +249,11 @@ int BufferedBlockDevice::program(const void *b, bd_addr_t addr, bd_size_t size)
             if (ret) {
                 return ret;
             }
+            invalidate_write_cache();
             ret = _bd->sync();
             if (ret) {
                 return ret;
             }
-            invalidate_write_cache();
         } else {
             _write_cache_valid = true;
         }
