@@ -18,6 +18,7 @@ set(unittest-sources
   stubs/mbed_atomic_stub.c
   stubs/mbed_assert_stub.c
   stubs/mbed_error.c
+  stubs/EmulatedSD.cpp
 )
 
 set(unittest-test-sources
