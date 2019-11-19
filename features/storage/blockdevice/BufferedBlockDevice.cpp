@@ -77,7 +77,10 @@ int BufferedBlockDevice::deinit()
     }
 
     // Flush out all data from buffers
-    sync();
+    int err = sync();
+    if (err) {
+        return err;
+    }
 
     uint32_t val = core_util_atomic_decr_u32(&_init_ref_count, 1);
 
